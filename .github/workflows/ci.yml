@@ -2,9 +2,10 @@ name: Nexora CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, master, develop ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, master, develop ]
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -12,7 +13,7 @@ concurrency:
 
 jobs:
   # -------------------------------------------------------------
-  # Job 1: KMP Shared Logic & Android Application
+  # Job 1: KMP Shared Logic & Android Application (Ubuntu Runner)
   # -------------------------------------------------------------
   android-and-shared:
     name: KMP Core & Android Build
@@ -32,14 +33,17 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+
       - name: Create CI local.properties
         run: |
           echo "sdk.dir=$ANDROID_HOME" > local.properties
           echo "GROQ_API_KEY=" >> local.properties
           echo "GROQ_MODEL=llama-3.3-70b-versatile" >> local.properties
 
-      - name: Run Shared KMP Unit Tests
-        run: ./gradlew :sharedLogic:allTests --stacktrace
+      - name: Run Core Test Suite
+        run: ./gradlew test --stacktrace
 
       - name: Build Android Debug Application
         run: ./gradlew :androidApp:assembleDebug --stacktrace
@@ -47,12 +51,20 @@ jobs:
       - name: Build Optional Local Ktor Backend
         run: ./gradlew :backend:build --stacktrace
 
+      - name: Upload Android Debug APK
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: nexora-android-debug-apk
+          path: androidApp/build/outputs/apk/debug/*.apk
+          retention-days: 7
+
   # -------------------------------------------------------------
   # Job 2: iOS Shared Framework & Native SwiftUI App (macOS Runner)
   # -------------------------------------------------------------
   ios-build:
     name: iOS Framework & SwiftUI Build
-    runs-on: macos-latest
+    runs-on: macos-14
     timeout-minutes: 30
 
     steps:
@@ -68,6 +80,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+
       - name: Create CI local.properties
         run: |
           echo "GROQ_API_KEY=" >> local.properties
@@ -75,9 +90,6 @@ jobs:
 
       - name: Build KMP iOS Shared Framework (Simulator ARM64)
         run: ./gradlew :sharedLogic:linkDebugFrameworkIosSimulatorArm64 --stacktrace
-
-      - name: Select Xcode Version
-        run: sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer
 
       - name: Build iOS SwiftUI Application with xcodebuild
         run: |
@@ -87,4 +99,6 @@ jobs:
             -destination "generic/platform=iOS Simulator" \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
             COMPILER_INDEX_STORE_ENABLE=NO
