@@ -1,0 +1,9 @@
+## Nexora Local Properties Template
+# Copy this file to local.properties and configure your local settings.
+
+# Location of the Android SDK (configured automatically by Android Studio)
+# sdk.dir=C\:\\Users\\<YourUsername>\\AppData\\Local\\Android\\Sdk
+
+# Groq AI Configuration (Optional - Leave empty for offline mode)
+GROQ_API_KEY=
+GROQ_MODEL=llama-3.3-70b-versatile
