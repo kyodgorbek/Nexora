@@ -36,6 +36,26 @@
 
 ---
 
+## 🛠️ Technology Stack & Architecture
+
+| Layer / Domain | Technology / Library | Version | Description & Role |
+| :--- | :--- | :--- | :--- |
+| **KMP Shared Core** | `Kotlin Multiplatform` | `2.1.10` | 100% shared business logic, state machines, domain models & Use Cases |
+| **Reactive Concurrency** | `Kotlinx Coroutines` & `Flow` | `1.10.1` | High-throughput async telemetry streams, state sharing & coroutine lifecycle management |
+| **Data Serialization** | `Kotlinx Serialization JSON` | `1.8.0` | Compile-time verified JSON serialization for AI payloads, REST API & WebSocket frames |
+| **Date & Time Engine** | `Kotlinx DateTime` | `0.6.2` | Multiplatform UTC time-series management and telemetry windowing calculations |
+| **Networking (Client)** | `Ktor Client (CIO & Darwin)` | `3.1.1` | Multiplatform HTTP/REST & WebSocket client engine (CIO on Android, Darwin on iOS) |
+| **Android UI** | `Jetpack Compose` + `Material 3` | `1.7.8` / `1.3.1` | Native Android UI with dark aesthetic theme, real-time gauges, and pulse radar animations |
+| **Android Bluetooth** | `Android BluetoothGatt` + `Scan API` | Native | Low-Latency BLE scanning, Classic BT discovery, GATT callbacks & Android 12+ permissions |
+| **iOS UI** | `Native SwiftUI` & `Swift Charts` | iOS 17+ | Pure SwiftUI interface, SF Symbols, custom gauge meters, and interactive telemetry charts |
+| **iOS Bluetooth** | `CoreBluetooth` (`CBCentralManager`) | Native | iOS BLE scanning, peripheral connection management, and GATT characteristic streams |
+| **AI Intelligence** | `Groq Cloud API` (`Llama 3.3 70B`) | Cloud / Offline | Natural language command translation with capability validation & confirmation modals |
+| **Local Server** | `Ktor Server (Netty Engine)` | `3.1.1` | Optional embedded local REST & WebSocket server for multi-device sync and monitoring |
+| **Architecture Pattern** | `MVI` + `Clean Architecture` | Standard | Unidirectional Data Flow (UDF), isolated domain use cases, and immutable state flows |
+| **Build & CI/CD** | `Gradle Version Catalogs` & `GitHub Actions` | AGP `9.1.1` | Reproducible builds with Ubuntu Android APK packaging and macOS 15 Xcode 16 testing |
+
+---
+
 ## 🏗️ Architecture
 
 ```mermaid
@@ -95,7 +115,8 @@ Nexora/
 │   ├── androidMain/     # AndroidBleManager (BluetoothGatt + Discovery + Permissions)
 │   └── iosMain/         # Swift / iOS interoperability bridges
 ├── backend/             # Optional local Ktor server (REST & WebSockets)
-└── docs/                # Architecture, GATT specs, and guides
+├── docs/                # Architecture, GATT specs, and guides
+└── gradle/              # Gradle wrapper & Version Catalog (libs.versions.toml)
 ```
 
 ---
