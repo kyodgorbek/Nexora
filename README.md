@@ -53,6 +53,7 @@
 | **Local Server** | `Ktor Server (Netty Engine)` | `3.1.1` | Optional embedded local REST & WebSocket server for multi-device sync and monitoring |
 | **Architecture Pattern** | `MVI` + `Clean Architecture` | Standard | Unidirectional Data Flow (UDF), isolated domain use cases, and immutable state flows |
 | **Build & CI/CD** | `Gradle Version Catalogs` & `GitHub Actions` | AGP `9.1.1` | Reproducible builds with Ubuntu Android APK packaging and macOS 15 Xcode 16 testing |
+| **Unit Testing & TDD** | `JUnit4`, `Mockito`, `Robolectric`, `Turbine` | Latest | Test-Driven Development (TDD) for BleManagers, ViewModels, UseCases, Repositories, and Validators |
 
 ---
 
@@ -191,11 +192,14 @@ cp local.properties.example local.properties
 ### 4. Build & Run iOS Application
 Open `iosApp/iosApp.xcodeproj` in Xcode and press `Cmd + R` on any iOS Simulator or physical iPhone.
 
-### 5. Run Test Suite
+### 5. Run Test Suite (TDD)
 ```bash
-# Run unit tests across shared logic & Android
+# Run unit tests across shared logic & Android (JUnit, Mockito, Robolectric)
 ./gradlew test
 ```
+The codebase uses a **Test-Driven Development (TDD)** approach with rigorous coverage:
+- **Shared Logic**: Kotlin `kotlin-test`, `runTest`, `Turbine` for UseCases, Validators, state machines, and anomaly detection.
+- **Android App**: `JUnit4`, `Mockito-Kotlin`, and `Robolectric` (ShadowBluetoothAdapter) for platform-specific hardware logic like `AndroidBleManager`, UI state verification, and Context interactions.
 
 ### 6. Run Optional Local Ktor Backend
 ```bash
